@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Executivo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #000428 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                radial-gradient(4px 4px at 20px 30px, #D4AF37, transparent),
+                radial-gradient(4px 4px at 80px 80px, rgba(255,255,255,0.2), transparent),
+                radial-gradient(2px 2px at 120px 40px, #D4AF37, transparent),
+                radial-gradient(2px 2px at 200px 120px, rgba(255,255,255,0.3), transparent);
+            background-repeat: repeat;
+            background-size: 300px 200px;
+            animation: bgFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(40px, -40px) rotate(120deg); }
+            66% { transform: translate(-30px, 30px) rotate(240deg); }
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(30px);
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .main-content {
+            padding: 80px 60px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(42px, 7vw, 64px);
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: rgba(255,255,255,0.8);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 28px;
+            padding: 45px 35px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #D4AF37, #FFD700, #D4AF37);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 35px 70px rgba(0,0,0,0.5);
+            border-color: rgba(212,175,55,0.3);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 25px rgba(212,175,55,0.4));
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .stat-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: clamp(32px, 6vw, 48px);
+            font-weight: 800;
+            color: #D4AF37;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .stat-change.positive { color: #27ae60; }
+        .stat-change.negative { color: #e74c3c; }
+
+        .quick-actions {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .actions-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            padding: 20px 30px;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-8px);
+            border-color: #D4AF37;
+            box-shadow: 0 20px 40px rgba(212,175,55,0.2);
+        }
+
+        .action-icon {
+            font-size: 28px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-section {
+            text-align: center;
+        }
+
+        .back-btn {
+            padding: 18px 50px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #D4AF37;
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(212,175,55,0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 25px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 50px 25px 40px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="logo-header">
+            <i class="fas fa-hotel"></i>
+            Hotel Analytics
+        </div>
+        <a href="#" class="user-profile">
+            <div class="user-avatar">AV</div>
+            <span>Admin</span>
+            <i class="fas fa-chevron-down"></i>
+        </a>
+    </header>
+
+    <main class="main-content">
+       
+        <section class="hero-section">
+            <h1 class="hero-title">Visão Geral</h1>
+            <p class="hero-subtitle">
+                Dashboard em tempo real do hotel
+            </p>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-bed stat-icon"></i>
+                <div class="stat-title">Quartos Disponíveis</div>
+                <div class="stat-value">{{ livres }}</div>
+                <div class="stat-change positive">+{{ livres//2 }} este mês</div>
+            </div>
+            
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon"></i>
+                <div class="stat-title">Quartos Ocupados</div>
+                <div class="stat-value">{{ ocupados }}</div>
+                <div class="stat-change positive">+{{ ocupados//3 }} hoje</div>
+            </div>
+            
+            <div class="stat-card">
+                <i class="fas fa-dollar-sign stat-icon"></i>
+                <div class="stat-title">Faturamento Total</div>
+                <div class="stat-value">R$ {{ "%.2f"|format(faturamento) }}</div>
+                <div class="stat-change positive">+18.2% mês</div>
+            </div>
+            
+            <div class="stat-card">
+                <i class="fas fa-calendar-check stat-icon"></i>
+                <div class="stat-title">Hóspedes Atuais</div>
+                <div class="stat-value">{{ total_hospedes }}</div>
+                <div class="stat-change positive">+{{ total_hospedes//4 }} semana</div>
+            </div>
+        </section>
+
+        <section class="quick-actions">
+            <h2 class="actions-title">
+                <i class="fas fa-rocket"></i>
+                Ações Rápidas
+            </h2>
+            <div class="actions-grid">
+                <a href="/cadastro" class="action-btn">
+                    <i class="fas fa-user-plus action-icon"></i>
+                    <span>Novo Hóspede</span>
+                </a>
+                <a href="/reserva" class="action-btn">
+                    <i class="fas fa-calendar-plus action-icon"></i>
+                    <span>Nova Reserva</span>
+                </a>
+                <a href="/lista" class="action-btn">
+                    <i class="fas fa-list action-icon"></i>
+                    <span>Ver Hóspedes</span>
+                </a>
+                <a href="/lista_reservas" class="action-btn">
+                    <i class="fas fa-calendar-check action-icon"></i>
+                    <span>Reservas</span>
+                </a>
+                <a href="/quartos" class="action-btn">
+                    <i class="fas fa-bed action-icon"></i>
+                    <span>Quartos</span>
+                </a>
+                <a href="/relatorio" class="action-btn">
+                    <i class="fas fa-download action-icon"></i>
+                    <span>Relatórios</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="back-section">
+            <a href="/" class="back-btn">
+                <i class="fas fa-home"></i>
+                Menu Principal
+            </a>
+        </div>
+    </main>
+
+    <script>
+        
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            const counters = document.querySelectorAll('.stat-value');
+            counters.forEach(counter => {
+                const target = parseFloat(counter.textContent.replace(/[^\d.-]/g, ''));
+                const duration = 2000;
+                let start = 0;
+                const increment = target / (duration / 16);
+                
+                function updateCounter() {
+                    start += increment;
+                    if (start < target) {
+                        if (counter.textContent.includes('R$')) {
+                            counter.textContent = 'R$ ' + Math.floor(start).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                        } else {
+                            counter.textContent = Math.floor(start);
+                        }
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = counter.dataset.original || counter.textContent;
+                    }
+                }
+                requestAnimationFrame(updateCounter);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel VICTOR</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #000428 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, #D4AF37 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatParticle 8s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% { 
+                transform: translateY(100vh) translateX(0) rotate(0deg); 
+                opacity: 0; 
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { 
+                transform: translateY(-20vh) translateX(100px) rotate(360deg); 
+                opacity: 0; 
+            }
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            margin-right: 12px;
+            font-size: 32px;
+            animation: iconPulse 2s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+            font-size: 16px;
+        }
+
+        .main-content {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 6vw, 54px);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .menu-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #D4AF37, #FFD700, #D4AF37);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            border-color: rgba(212,175,55,0.3);
+        }
+
+        .menu-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .menu-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(212,175,55,0.3));
+        }
+
+        .menu-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .menu-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .admin-section {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+        }
+
+        .admin-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+            display: block;
+            width: fit-content;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,50,50,0.2);
+            color: #fff;
+            border-color: rgba(255,50,50,0.4);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 40px 20px;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="bg-particles" id="particles"></div>
+
+    <header class="header">
+        <div class="logo-header">
+            <i class="fas fa-hotel logo-icon"></i>
+            Hotel Luxor
+        </div>
+        <div class="user-info">
+            <span>Bem-vindo, Admin</span>
+            <div class="user-avatar">AV</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+        <section class="hero-section">
+            <h1 class="hero-title">Controle Total</h1>
+            <p class="hero-subtitle">
+                Gerencie seu hotel  com eficiência e sofisticação. 
+            </p>
+        </section>
+
+        {% if session["usuario_tipo"] == "admin" %}
+        <section class="admin-section">
+            <h2 class="admin-title">Ferramentas Administrativas</h2>
+            <a href="/dashboard" class="menu-card" style="display: inline-block; width: 300px;">
+                <i class="fas fa-chart-line menu-icon"></i>
+                <div class="menu-title">Dashboard Completo</div>
+                <div class="menu-desc">Métricas e relatórios em tempo real</div>
+            </a>
+            <a href="/criar-conta" class="menu-card" style="display: inline-block; width: 300px;">
+                <i class="fas fa-user-plus menu-icon"></i>
+                <div class="menu-title">Criar Usuário</div>
+                <div class="menu-desc">Gerencie contas de funcionários</div>
+            </a>
+        </section>
+        {% endif %}
+
+        <section class="menu-grid">
+            <a href="/reserva" class="menu-card">
+                <i class="fas fa-calendar-check menu-icon"></i>
+                <div class="menu-title">Fazer Reserva</div>
+                <div class="menu-desc">Registre novas reservas rapidamente</div>
+            </a>
+
+            <a href="/lista_reservas" class="menu-card">
+                <i class="fas fa-list menu-icon"></i>
+                <div class="menu-title">Lista de Reservas</div>
+                <div class="menu-desc">Consulte todas as reservas ativas</div>
+            </a>
+
+            <a href="/cadastro" class="menu-card">
+                <i class="fas fa-user-plus menu-icon"></i>
+                <div class="menu-title">Adicionar Hóspedes</div>
+                <div class="menu-desc">Cadastro completo de hóspedes</div>
+            </a>
+
+            <a href="/lista" class="menu-card">
+                <i class="fas fa-users menu-icon"></i>
+                <div class="menu-title">Hóspedes Ativos</div>
+                <div class="menu-desc">Lista atualizada de ocupação</div>
+            </a>
+
+            <a href="/quartos" class="menu-card">
+                <i class="fas fa-bed menu-icon"></i>
+                <div class="menu-title">Quartos Disponíveis</div>
+                <div class="menu-desc">Status completo da ocupação</div>
+            </a>
+        </section>
+
+        <a href="/sair" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            Sair do Sistema
+        </a>
+    </main>
+
+    <script>
+        
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 60; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 5 + 6) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            createParticles();
+            
+            const cards = document.querySelectorAll('.menu-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(40px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

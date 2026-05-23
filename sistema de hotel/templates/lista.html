@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóspedes Ativos</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #000428 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(212,175,55,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(255,215,0,0.03) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(25px);
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .add-guest-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 25px rgba(212,175,55,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-guest-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 35px rgba(212,175,55,0.4);
+        }
+
+        .main-content {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .toolbar {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 25px 30px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-form {
+            flex: 1;
+            display: flex;
+            gap: 15px;
+            min-width: 350px;
+            max-width: 500px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 18px 24px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+        }
+
+        .search-btn, .report-btn {
+            padding: 18px 28px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(212,175,55,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover, .report-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(212,175,55,0.4);
+        }
+
+        .table-container {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background: transparent;
+        }
+
+        thead {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(255,215,0,0.1));
+        }
+
+        th {
+            padding: 22px 20px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, #D4AF37, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        tr:hover th::after {
+            opacity: 1;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tbody tr:hover {
+            background: rgba(212,175,55,0.08);
+            transform: scale(1.01);
+        }
+
+        td {
+            padding: 22px 20px;
+            font-size: 15px;
+            color: #e0e0e0;
+            vertical-align: middle;
+        }
+
+        .guest-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .room-badge {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+
+        .total-value {
+            color: #D4AF37;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            padding: 10px 20px;
+            background: rgba(52,152,219,0.2);
+            color: #3498db;
+            border: 1px solid rgba(52,152,219,0.4);
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-edit:hover {
+            background: rgba(52,152,219,0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            padding: 10px 20px;
+            background: rgba(231,76,60,0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231,76,60,0.4);
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-delete:hover {
+            background: rgba(231,76,60,0.4);
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            padding: 80px 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .back-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .back-btn {
+            padding: 16px 40px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #D4AF37;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 40px 20px;
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-form {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <header class="header">
+        <div class="page-title">
+            <i class="fas fa-users"></i>
+            Hóspedes Ativos
+        </div>
+        <a href="/cadastro" class="add-guest-btn">
+            <i class="fas fa-plus"></i>
+            Novo Hóspede
+        </a>
+    </header>
+
+    <main class="main-content">
+       
+        <div class="toolbar">
+            <form action="/lista" method="GET" class="search-form">
+                <input type="text" name="busca" class="search-input" placeholder="🔍 Pesquisar por nome ou CPF..." value="{{ termo_busca }}">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+            </form>
+            
+            {% if session["usuario_tipo"] == "admin" %}
+            <a href="/relatorio" class="report-btn">
+                <i class="fas fa-download"></i>
+                Relatório CSV
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="table-container">
+            {% if hospedes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hóspede</th>
+                        <th>CPF</th>
+                        <th>Quarto</th>
+                        <th>Valor Total</th>
+                        <th style="text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in hospedes %}
+                    <tr>
+                        <td>
+                            <div class="guest-name">{{ h[1] }}</div>
+                        </td>
+                        <td>{{ h[2] }}</td>
+                        <td><span class="room-badge">Quarto {{ h[4] }}</span></td>
+                        <td><span class="total-value">R$ {{ "%.2f"|format(h[8]) }}</span></td>
+                        <td style="text-align: center;">
+                            <div class="action-buttons">
+                                {% if session["usuario_tipo"] == "admin" %}
+                                <a href="/editar/{{ h[0] }}" class="btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                    Editar
+                                </a>
+                                {% endif %}
+                                <a href="/excluir/{{ h[0] }}" class="btn-delete" onclick="return confirm('Excluir este hóspede?')">
+                                    <i class="fas fa-trash"></i>
+                                    Excluir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-users-slash"></i>
+                </div>
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; color: #fff;">
+                    Nenhum hóspede encontrado
+                </h3>
+                <p style="font-size: 16px; margin-bottom: 30px;">
+                    Adicione o primeiro hóspede ou ajuste sua pesquisa
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="back-section">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao Menu Principal
+            </a>
+        </div>
+    </main>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const rows = document.querySelectorAll('tbody tr');
+            
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase();
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

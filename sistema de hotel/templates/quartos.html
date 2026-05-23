@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quartos Disponíveis</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #000428 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                radial-gradient(3px 3px at 25px 35px, #D4AF37, transparent),
+                radial-gradient(3px 3px at 85px 75px, rgba(255,255,255,0.15), transparent),
+                radial-gradient(2px 2px at 140px 50px, #D4AF37, transparent);
+            background-repeat: repeat;
+            background-size: 250px 180px;
+            animation: bgFloat 25s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(25px, -25px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(30px);
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 34px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            letter-spacing: -1px;
+        }
+
+        .stats-header {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat-mini {
+            background: rgba(255,255,255,0.08);
+            padding: 12px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-total { color: #D4AF37; }
+        .stat-available { color: #27ae60; }
+        .stat-occupied { color: #e74c3c; }
+
+        .main-content {
+            padding: 80px 60px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 10px;
+        }
+
+        .filters-bar {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 25px 40px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group:hover, .filter-group.active {
+            background: rgba(212,175,55,0.15);
+            border-color: #D4AF37;
+            transform: translateY(-2px);
+        }
+
+        .filter-icon {
+            font-size: 16px;
+            color: #D4AF37;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .room-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 24px;
+            padding: 35px 25px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .room-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #D4AF37, #FFD700, transparent);
+            opacity: 0;
+            transform: scaleX(0);
+            transition: all 0.4s ease;
+        }
+
+        .room-card.occupied {
+            border-color: rgba(231,76,60,0.4);
+            background: linear-gradient(145deg, rgba(231,76,60,0.08), rgba(255,255,255,0.03));
+        }
+
+        .room-card.available {
+            border-color: rgba(39,174,96,0.4);
+            background: linear-gradient(145deg, rgba(39,174,96,0.08), rgba(255,255,255,0.03));
+        }
+
+        .room-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .room-card:hover::before {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .room-number {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 8vw, 52px);
+            font-weight: 900;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+
+        .room-status {
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .status-occupied {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+
+        .status-available {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+        }
+
+        .guest-name {
+            font-size: 15px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: auto;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 100px 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            opacity: 0.2;
+        }
+
+        .back-section {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .back-btn {
+            padding: 20px 50px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 28px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #D4AF37;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(212,175,55,0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .rooms-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 25px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 60px 25px 40px;
+            }
+            
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+                padding: 25px 25px;
+            }
+            
+            .rooms-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="page-title">
+            <i class="fas fa-bed"></i>
+            Status dos Quartos
+        </div>
+        <div class="stats-header">
+            <div class="stat-mini stat-total">
+                <i class="fas fa-hashtag"></i> {{ quartos|length }} Total
+            </div>
+            <div class="stat-mini stat-available">
+                <i class="fas fa-check"></i> {{ livres }} Livres
+            </div>
+            <div class="stat-mini stat-occupied">
+                <i class="fas fa-user"></i> {{ ocupados }} Ocupados
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+       
+        <div class="page-header">
+            <p class="page-subtitle">Visualização em tempo real da ocupação</p>
+        </div>
+
+        <div class="filters-bar">
+            <div class="filter-group active" data-filter="all">
+                <i class="fas fa-th filter-icon"></i>
+                <span>Todos</span>
+            </div>
+            <div class="filter-group" data-filter="available">
+                <i class="fas fa-check-circle filter-icon"></i>
+                <span>Disponíveis</span>
+            </div>
+            <div class="filter-group" data-filter="occupied">
+                <i class="fas fa-user-check filter-icon"></i>
+                <span>Ocupados</span>
+            </div>
+        </div>
+
+        <div class="rooms-grid">
+            {% if quartos %}
+                {% for quarto in quartos %}
+                <div class="room-card {{ quarto.status }}" data-status="{{ quarto.status }}">
+                    <div class="room-number">{{ quarto.numero }}</div>
+                    
+                    {% if quarto.status == 'ocupado' %}
+                        <div class="room-status status-occupied">
+                            <i class="fas fa-user"></i> Ocupado
+                        </div>
+                        <div class="guest-name" title="{{ quarto.hospede }}">
+                            {{ quarto.hospede }}
+                        </div>
+                    {% else %}
+                        <div class="room-status status-available">
+                            <i class="fas fa-check"></i> Disponível
+                        </div>
+                        <div class="guest-name">
+                            Pronto para check-in
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bed empty-icon"></i>
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 15px;">
+                    Nenhum quarto configurado
+                </h3>
+                <p style="font-size: 16px; opacity: 0.7;">
+                    Configure os quartos no sistema administrativo
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="back-section">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard Principal
+            </a>
+        </div>
+    </main>
+
+    <script>
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const filters = document.querySelectorAll('.filter-group');
+            const rooms = document.querySelectorAll('.room-card');
+            
+            filters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                 
+                    filters.forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filterValue = this.dataset.filter;
+                    
+                    rooms.forEach(room => {
+                        if (filterValue === 'all' || room.dataset.status === filterValue) {
+                            room.style.opacity = '1';
+                            room.style.transform = 'scale(1)';
+                            room.style.pointerEvents = 'auto';
+                        } else {
+                            room.style.opacity = '0.3';
+                            room.style.transform = 'scale(0.95)';
+                            room.style.pointerEvents = 'none';
+                        }
+                    });
+                });
+            });
+            
+            rooms.forEach((room, index) => {
+                room.style.opacity = '0';
+                room.style.transform = 'translateY(40px)';
+                setTimeout(() => {
+                    room.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    room.style.opacity = '1';
+                    room.style.transform = 'translateY(0)';
+                }, index * 80);
+            });
+        });
+    </script>
+</body>
+</html>

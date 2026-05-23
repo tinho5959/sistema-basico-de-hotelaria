@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas Agendadas</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #000428 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(212,175,55,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(255,215,0,0.04) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(25px);
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .new-reservation-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 25px rgba(39,174,96,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .new-reservation-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 35px rgba(39,174,96,0.4);
+        }
+
+        .main-content {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stats-bar {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 25px 40px;
+            margin-bottom: 40px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filters-section {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .filters-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-container {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background: transparent;
+        }
+
+        thead {
+            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(255,215,0,0.08));
+        }
+
+        th {
+            padding: 22px 24px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.9);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        tbody tr {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tbody tr:hover {
+            background: rgba(212,175,55,0.1);
+            transform: scale(1.005);
+        }
+
+        td {
+            padding: 22px 24px;
+            font-size: 15px;
+            color: #e0e0e0;
+            vertical-align: middle;
+        }
+
+        .guest-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-confirmada {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(39,174,96,0.3);
+        }
+
+        .status-pendente {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(243,156,18,0.3);
+        }
+
+        .status-cancelada {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+        }
+
+        .date-range {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .empty-state {
+            padding: 100px 60px;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            opacity: 0.2;
+        }
+
+        .back-section {
+            text-align: center;
+        }
+
+        .back-btn {
+            padding: 18px 45px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #D4AF37;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(212,175,55,0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .stats-bar {
+                flex-direction: column;
+                gap: 25px;
+                padding: 30px 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 40px 20px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 16px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <header class="header">
+        <div class="page-title">
+            <i class="fas fa-calendar-check"></i>
+            Reservas Agendadas
+        </div>
+        <a href="/reserva" class="new-reservation-btn">
+            <i class="fas fa-plus"></i>
+            Nova Reserva
+        </a>
+    </header>
+
+    <main class="main-content">
+     
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">{{ reservas|length }}</div>
+                <div class="stat-label">Reservas Totais</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Confirmadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            {% if reservas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>Período</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservas %}
+                    <tr>
+                        <td>
+                            <div class="guest-name">{{ r[1] }}</div>
+                        </td>
+                        <td>{{ r[2] }}</td>
+                        <td>{{ r[3] }}</td>
+                        <td>
+                            <div class="date-range">
+                                {{ r[5] }} → {{ r[6] }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ r[7]|lower }}">
+                                {{ r[7] }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 15px; color: #fff;">
+                    Nenhuma reserva encontrada
+                </h3>
+                <p style="font-size: 18px; margin-bottom: 40px;">
+                    Crie a primeira reserva para começar
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="back-section">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao Dashboard
+            </a>
+        </div>
+    </main>
+</body>
+</html>

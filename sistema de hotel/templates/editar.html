@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Hóspede</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #000428 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 35%, rgba(212,175,55,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 75% 65%, rgba(255,215,0,0.05) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(25px);
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .back-btn:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #D4AF37;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212,175,55,0.2);
+        }
+
+        .main-content {
+            padding: 80px 60px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .guest-info {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .guest-name-display {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(212,175,55,0.3);
+        }
+
+        .guest-room {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(212,175,55,0.3);
+        }
+
+        .form-container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px;
+            padding: 50px;
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 20px 24px 20px 60px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 400;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            backdrop-filter: blur(15px);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-3px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 24px;
+            top: 52px;
+            color: rgba(255,255,255,0.5);
+            font-size: 18px;
+            transition: 0.3s ease;
+            z-index: 2;
+        }
+
+        .form-input:focus ~ .input-icon {
+            color: #D4AF37;
+            transform: scale(1.1);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-save {
+            flex: 1;
+            max-width: 220px;
+            padding: 22px 40px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border: none;
+            border-radius: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(39,174,96,0.3);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(39,174,96,0.4);
+        }
+
+        .btn-cancel {
+            padding: 22px 40px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(212,175,55,0.2);
+            border-color: #D4AF37;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .main-content {
+                padding: 60px 25px 40px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-container {
+                padding: 40px 25px;
+            }
+            
+            .guest-info {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <header class="header">
+        <div class="logo-header">
+            <i class="fas fa-hotel"></i>
+            Hotel VICTOR
+        </div>
+        <a href="/lista" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Voltar à Lista
+        </a>
+    </header>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Editar Hóspede</h1>
+            <p class="page-subtitle">Atualize as informações do hóspede </p>
+        </div>
+
+        <div class="guest-info">
+            <div class="guest-name-display">{{ hospede[1] }}</div>
+            <div class="guest-room">Quarto {{ hospede[4] }}</div>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/atualizar/{{ hospede[0] }}">
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" name="nome" class="form-input" value="{{ hospede[1] }}" required>
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">CPF</label>
+                        <input type="text" name="cpf" class="form-input" value="{{ hospede[2] }}" required>
+                        <i class="fas fa-id-card input-icon"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" name="telefone" class="form-input" value="{{ hospede[3] }}" required>
+                        <i class="fas fa-phone input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Quarto</label>
+                        <input type="text" name="quarto" class="form-input" value="{{ hospede[4] }}" required>
+                        <i class="fas fa-bed input-icon"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Valor Diária (R$)</label>
+                        <input type="text" name="valor_diaria" class="form-input" value="{{ hospede[7] }}" required>
+                        <i class="fas fa-dollar-sign input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Data de Entrada</label>
+                        <input type="date" name="data_entrada" class="form-input" value="{{ hospede[5] }}" required>
+                        <i class="fas fa-calendar-alt input-icon"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Data de Saída</label>
+                        <input type="date" name="data_saida" class="form-input" value="{{ hospede[6] }}" required>
+                        <i class="fas fa-calendar-check input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i>
+                        Salvar Alterações
+                    </button>
+                    <a href="/lista" class="btn-cancel">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfInput = document.querySelector('input[name="cpf"]');
+            const telInput = document.querySelector('input[name="telefone"]');
+            
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            });
+            
+            telInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{4,5})(\d{4})$/, '$1-$2');
+                e.target.value = value;
+            });
+            
+            const formContainer = document.querySelector('.form-container');
+            const guestInfo = document.querySelector('.guest-info');
+            
+            guestInfo.style.opacity = '0';
+            guestInfo.style.transform = 'translateY(30px)';
+            formContainer.style.opacity = '0';
+            formContainer.style.transform = 'translateY(40px)';
+            
+            setTimeout(() => {
+                guestInfo.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                guestInfo.style.opacity = '1';
+                guestInfo.style.transform = 'translateY(0)';
+            }, 300);
+            
+            setTimeout(() => {
+                formContainer.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                formContainer.style.opacity = '1';
+                formContainer.style.transform = 'translateY(0)';
+            }, 600);
+        });
+    </script>
+</body>
+</html>
